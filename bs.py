@@ -1,6 +1,8 @@
 import requests
 import datetime
+import dateutil.relativedelta as reldate
 from bs4 import BeautifulSoup
+from dateutil.relativedelta import relativedelta
 r = requests.get('https://www.windfinder.com/forecast/strathallen_airfield')
 soup = BeautifulSoup(r.content, 'html5lib')
 smidge = soup.find_all("div", {"class": "weathertable forecast-day forecast forecast-day-8"})
@@ -23,12 +25,28 @@ for hit in soup.findAll(attrs={'class' : 'units-cl-perc'}):
 file.flush()
 file.close()
 
-_3AM = datetime.time(hour=3)
-_FRI = 4 # Monday=0 for weekday()
+def following_saturday(dt):   
+    rd=reldate.relativedelta(
+        weekday=reldate.SA(+1),
+        hours=+8)
+    rd2=reldate.relativedelta(
+        hour=8,minute=0,second=0,microsecond=0)
+    return dt+rd+rd2
 
-def _next_weekday(day_of_week=4, time_of_day=datetime.time(hour=3), dt=None):
-    if dt is None: dt = datetime.datetime.now()
-    dt += datetime.timedelta(days=7)
-    if dt.time() < time_of_day: dt = dt.combine(dt.date(), time_of_day)
-    else: dt = dt.combine(dt.date(), time_of_day) + datetime.timedelta(days=1)
-    return dt + datetime.timedelta((day_of_week - dt.weekday()) % 7)
+if __name__=='__main__':
+    today=datetime.datetime.now()
+    for dt in [today+datetime.timedelta(days=0)]:
+        print(following_saturday(dt))
+
+def following_sunday(dt):   
+    rd=reldate.relativedelta(
+        weekday=reldate.SU(+1),
+        hours=+8)
+    rd2=reldate.relativedelta(
+        hour=8,minute=0,second=0,microsecond=0)
+    return dt+rd+rd2
+
+if __name__=='__main__':
+    today=datetime.datetime.now()
+    for dt in [today+datetime.timedelta(days=0)]:
+        print(following_sunday(dt))
