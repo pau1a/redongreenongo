@@ -1,6 +1,7 @@
 import requests
 import datetime
 import dateutil.relativedelta as reldate
+import time
 from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
 r = requests.get('https://www.windfinder.com/forecast/strathallen_airfield')
@@ -35,7 +36,7 @@ def following_saturday(dt):
 if __name__=='__main__':
     today=datetime.datetime.now()
     for dt in [today+datetime.timedelta(days=0)]:
-        print(following_saturday(dt))
+        print("Date and time of next Saturday 8 am is: %s" % following_saturday(dt))
 
 #Lets calculate the date of the coming Sunday at 8am
 
@@ -46,28 +47,13 @@ def following_sunday(dt):
 
 if __name__=='__main__':
     for dt in [today+datetime.timedelta(days=0)]:
-        print(following_sunday(dt))
+        print("Date and time of next Sunday 8 am is: %s" % following_sunday(dt))
         
         
 #Lets subtract the dates to get two offsets
 
 saturday_offset = following_saturday(dt) - today
-print(saturday_offset)
+print("Number of seconds until 8am next Saturday is: %s" % saturday_offset.total_seconds())
 sunday_offset = following_sunday(dt) - today
-print(saturday_offset)
-print(datetime.datetime.now())
+print("Number of seconds until 8am next Sunday is: %s" % sunday_offset.total_seconds())
 
-#Lets divide the offsets into a number of 3hr chunks
-
-from dateutil.relativedelta import *
-from dateutil.easter import *
-from dateutil.rrule import *
-from dateutil.parser import *
-from datetime import *
-from dateutil.relativedelta import relativedelta, weekday
-import dateutil.relativedelta as reldate
-now = datetime.now()
-satwait = rrule(DAILY,dtstart=now,byweekday=SA)[1].day
-sunwait = rrule(DAILY,dtstart=now,byweekday=SU)[1].day
-print("Number of days until next Saturday is: %s" % satwait)
-print("Number of days until next Sunday is: %s" % sunwait)
