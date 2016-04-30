@@ -59,4 +59,15 @@ print(datetime.datetime.now())
 
 #Lets divide the offsets into a number of 3hr chunks
 
-
+from dateutil.relativedelta import *
+from dateutil.easter import *
+from dateutil.rrule import *
+from dateutil.parser import *
+from datetime import *
+from dateutil.relativedelta import relativedelta, weekday
+import dateutil.relativedelta as reldate
+now = datetime.now()
+satwait = rrule(DAILY,dtstart=now,byweekday=SA)[1].day
+sunwait = rrule(DAILY,dtstart=now,byweekday=SU)[1].day
+print("Number of days until next Saturday is: %s" % satwait)
+print("Number of days until next Sunday is: %s" % sunwait)
