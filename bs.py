@@ -25,12 +25,11 @@ for hit in soup.findAll(attrs={'class' : 'units-cl-perc'}):
 file.flush()
 file.close()
 
+#Lets calculate the date of the coming Saturday at 8am
+
 def following_saturday(dt):   
-    rd=reldate.relativedelta(
-        weekday=reldate.SA(+1),
-        hours=+8)
-    rd2=reldate.relativedelta(
-        hour=8,minute=0,second=0,microsecond=0)
+    rd=reldate.relativedelta(weekday=reldate.SA(+1),hours=+8)
+    rd2=reldate.relativedelta(hour=8,minute=0,second=0,microsecond=0)
     return dt+rd+rd2
 
 if __name__=='__main__':
@@ -38,15 +37,26 @@ if __name__=='__main__':
     for dt in [today+datetime.timedelta(days=0)]:
         print(following_saturday(dt))
 
+#Lets calculate the date of the coming Sunday at 8am
+
 def following_sunday(dt):   
-    rd=reldate.relativedelta(
-        weekday=reldate.SU(+1),
-        hours=+8)
-    rd2=reldate.relativedelta(
-        hour=8,minute=0,second=0,microsecond=0)
+    rd=reldate.relativedelta(weekday=reldate.SU(+1),hours=+8)
+    rd2=reldate.relativedelta(hour=8,minute=0,second=0,microsecond=0)
     return dt+rd+rd2
 
 if __name__=='__main__':
-    today=datetime.datetime.now()
     for dt in [today+datetime.timedelta(days=0)]:
         print(following_sunday(dt))
+        
+        
+#Lets subtract the dates to get two offsets
+
+saturday_offset = following_saturday(dt) - today
+print(saturday_offset)
+sunday_offset = following_sunday(dt) - today
+print(saturday_offset)
+print(datetime.datetime.now())
+
+#Lets divide the offsets into a number of 3hr chunks
+
+
