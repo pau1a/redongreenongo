@@ -60,11 +60,10 @@ print("Number of seconds until 8am next Sunday is: %s" % sunday_offset.total_sec
 #how many slots to ignore
 
 saturday_ignore_slots = saturday_offset.total_seconds() / 10800
-int_saturday_ignore_slots = int(round(saturday_ignore_slots) + 3)  #Add 3 as site retains whole day
-# Need to account for and offset as we move through the day !!!!!
+int_saturday_ignore_slots = int(round(saturday_ignore_slots) + (time.localtime().tm_hour/3))  #Add 3 as site retains whole day
 print("Number of timeslots to ignore until 8am next Saturday is: %s" % int_saturday_ignore_slots)
 
 sunday_ignore_slots = sunday_offset.total_seconds()/10800
-int_sunday_ignore_slots = int(round(sunday_ignore_slots) + 3)
+int_sunday_ignore_slots = int(round(sunday_ignore_slots) + (time.localtime().tm_hour/3))
 print("Number of timeslots to ignore until 8am next Sunday is: %s" % int_sunday_ignore_slots)
 
