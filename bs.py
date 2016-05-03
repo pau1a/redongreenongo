@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
 r = requests.get('https://www.windfinder.com/forecast/strathallen_airfield')
 soup = BeautifulSoup(r.content, 'html5lib')
-smidge = soup.find_all("div", {"class": "weathertable forecast-day forecast forecast-day-8"})
 
+#Now we extract the individual parameters to separate files
 file = open("temperatures.txt", "wt")
 for hit in soup.findAll(attrs={'class' : 'units-at'}):
     file.write(hit.text+"\n")
@@ -19,6 +19,14 @@ for hit in soup.findAll(attrs={'class' : 'units-ws'}):
     file.write(hit.text+"\n")
 file.flush()
 file.close()
+from itertools import islice
+def yield_alt(f, option='odd'):
+        if option == 'odd':
+            return islice(f, 0, None, 2)
+        return islice(f, 1, None, 2)
+with open('windspeeds.txt') as f:
+    for line in yield_alt(f):      
+        print (line)
 
 file = open("cloud-percent.txt", "wt")
 for hit in soup.findAll(attrs={'class' : 'units-cl-perc'}):
@@ -60,10 +68,21 @@ print("Number of seconds until 8am next Sunday is: %s" % sunday_offset.total_sec
 #how many slots to ignore
 
 saturday_ignore_slots = saturday_offset.total_seconds() / 10800
-int_saturday_ignore_slots = int(round(saturday_ignore_slots) + (time.localtime().tm_hour/3))  #Add 3 as site retains whole day
+int_saturday_ignore_slots = int(round(saturday_ignore_slots) + (time.localtime().tm_hour/3))
 print("Number of timeslots to ignore until 8am next Saturday is: %s" % int_saturday_ignore_slots)
 
 sunday_ignore_slots = sunday_offset.total_seconds()/10800
 int_sunday_ignore_slots = int(round(sunday_ignore_slots) + (time.localtime().tm_hour/3))
 print("Number of timeslots to ignore until 8am next Sunday is: %s" % int_sunday_ignore_slots)
 
+fp = open("sat_temperatures.txt","w")
+for i,line in enumerate(open("temperatures.txt")):
+    if i >= (int_saturday_ignore_slots - 1) and i < (int_saturday_ignore_slots + 4) :
+        fp.write(line)
+file.close()
+
+fp = open("sun_temperatures.txt","w")
+for i,line in enumerate(open("temperatures.txt")):
+    if i >= (int_sunday_ignore_slots - 1) and i < (int_sunday_ignore_slots + 4) :
+        fp.write(line)
+file.close()
