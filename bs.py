@@ -3,17 +3,11 @@ import datetime
 import dateutil.relativedelta as reldate
 import time
 from bs4 import BeautifulSoup
-from dateutil.relativedelta import relativedelta
+#from dateutil.relativedelta import relativedelta
 r = requests.get('https://www.windfinder.com/forecast/strathallen_airfield')
 soup = BeautifulSoup(r.content, 'html5lib')
 
 #Now we extract the individual parameters to separate files
-file = open("temperatures.txt", "wt")
-for hit in soup.findAll(attrs={'class' : 'units-at'}):
-    file.write(hit.text+"\n")
-file.flush()
-file.close()
-
 file = open("windspeeds.txt", "wt")
 for hit in soup.findAll(attrs={'class' : 'units-ws'}):
     file.write(hit.text+"\n")
@@ -24,9 +18,13 @@ def yield_alt(f, option='odd'):
         if option == 'odd':
             return islice(f, 0, None, 2)
         return islice(f, 1, None, 2)
+
 with open('windspeeds.txt') as f:
-    for line in yield_alt(f):      
-        print (line)
+    file = open("gust_windspeeds.txt", "wt")
+    for line in yield_alt(f, 'even'):      
+        file.write(line)
+    file.flush()
+    file.close()
 
 file = open("cloud-percent.txt", "wt")
 for hit in soup.findAll(attrs={'class' : 'units-cl-perc'}):
@@ -75,14 +73,26 @@ sunday_ignore_slots = sunday_offset.total_seconds()/10800
 int_sunday_ignore_slots = int(round(sunday_ignore_slots) + (time.localtime().tm_hour/3))
 print("Number of timeslots to ignore until 8am next Sunday is: %s" % int_sunday_ignore_slots)
 
-fp = open("sat_temperatures.txt","w")
-for i,line in enumerate(open("temperatures.txt")):
-    if i >= (int_saturday_ignore_slots - 1) and i < (int_saturday_ignore_slots + 4) :
+fp = open("sat_gusts.txt","w")
+for i,line in enumerate(open("gust_windspeeds.txt")):
+    if i >= (int_saturday_ignore_slots) and i < (int_saturday_ignore_slots + 5) :
         fp.write(line)
 file.close()
 
-fp = open("sun_temperatures.txt","w")
-for i,line in enumerate(open("temperatures.txt")):
-    if i >= (int_sunday_ignore_slots - 1) and i < (int_sunday_ignore_slots + 4) :
+fp = open("sun_gusts.txt","w")
+for i,line in enumerate(open("gust_windspeeds.txt")):
+    if i >= (int_sunday_ignore_slots) and i < (int_sunday_ignore_slots + 5) :
+        fp.write(line)
+file.close()
+
+fp = open("sat_cloud-percent.txt","w")
+for i,line in enumerate(open("cloud-percent.txt")):
+    if i >= (int_saturday_ignore_slots) and i < (int_saturday_ignore_slots + 5) :
+        fp.write(line)
+file.close()
+
+fp = open("sun_cloud-percent.txt","w")
+for i,line in enumerate(open("cloud-percent.txt")):
+    if i >= (int_sunday_ignore_slots) and i < (int_sunday_ignore_slots + 5) :
         fp.write(line)
 file.close()
